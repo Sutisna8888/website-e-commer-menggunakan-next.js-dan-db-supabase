@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String?
+  password  String
+  avatar    String?   @db.Text
+  role      String    @default("USER")
+  createdAt DateTime  @default(now())
+  orders    Order[]
+  addresses Address[]
+  favorites Favorite[]
+}
+
+model FoodItem {
+  id           String      @id @default(uuid())
+  name         String
+  description  String
+  price        Int
+  imageUrl     String
+  category     String
+  rating       Float
+  reviewsCount Int
+  prepTime     String
+  isAvailable  Boolean     @default(true)
+  soldCount    Int         @default(0)
+  createdAt    DateTime    @default(now())
+  orderItems   OrderItem[]
+  toppings     Topping[]
+  variants     Variant[]
+  favorites    Favorite[]
+}
+
+model Topping {
+  id         String   @id @default(uuid())
+  foodItemId String
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  name       String
+  price      Int
+}
+
+model GlobalTopping {
+  id         String   @id @default(uuid())
+  name       String
+  price      Int
+  categories String   @default("")
+  createdAt  DateTime @default(now())
+}
+
+model Variant {
+  id           String   @id @default(uuid())
+  foodItemId   String
+  foodItem     FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  name         String   // e.g. "Tingkat Kepedasan", "Tingkat Kemanisan"
+  options      String   // e.g. "Tidak Pedas,Sedang,Pedas,Sangat Pedas" atau "Tanpa Gula,Sedikit Gula,Manis Normal"
+  defaultValue String   // e.g. "Sedang" atau "Manis Normal"
+}
+
+
+model Order {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalAmount   Int
+  status        String      @default("PENDING")
+  address       String
+  paymentMethod String
+  createdAt     DateTime    @default(now())
+  orderItems    OrderItem[]
+
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodItemId String
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id])
+  quantity   Int
+  price      Int      // total price per item including toppings
+  spiceLevel String?
+  toppings   String?  // comma-separated toppings
+  notes      String?
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String   // e.g. "Rumah", "Kantor", "Lainnya"
+  receiver  String   // Nama penerima
+  phone     String   // No telepon penerima
+  detail    String   // Alamat lengkap
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodItemId String
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, foodItemId])
+}

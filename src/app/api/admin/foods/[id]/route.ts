@@ -1,0 +1,115 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { verifyJWT } from '@/lib/auth';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
+
+async function verifyAdmin(request: Request) {
+  const token = request.headers.get('cookie')?.split('session=')[1]?.split(';')[0];
+  if (!token) return false;
+  const session = await verifyJWT(token);
+  return session && session.role === 'ADMIN';
+}
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const isAdmin = await verifyAdmin(request);
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    const { id } = await params;
+    const formData = await request.formData();
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const price = formData.get('price') as string;
+    const category = formData.get('category') as string;
+    const isAvailable = formData.get('isAvailable') === 'true';
+    const toppingsStr = formData.get('toppings') as string;
+    
+    let toppings: { name: string, price: string }[] = [];
+    try {
+      if (toppingsStr) {
+        toppings = JSON.parse(toppingsStr);
+      }
+    } catch (err) {
+      console.error('Error parsing toppings:', err);
+    }
+    
+    let imageUrl: string | undefined = undefined;
+
+    const imageFile = formData.get('imageFile') as File | null;
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const filename = uniqueSuffix + '-' + imageFile.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch (err) {
+        // ignore if exists
+      }
+      
+      const filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+      imageUrl = `/uploads/${filename}`;
+    }
+
+    const dataToUpdate: Record<string, string | number | boolean> = {
+      name,
+      description,
+      price: parseInt(price || '0'),
+      category,
+      isAvailable
+    };
+
+    const dataToUpdatePrisma: Record<string, unknown> = {
+      ...dataToUpdate,
+      toppings: {
+        deleteMany: {},
+        create: toppings.map((t) => ({
+          name: t.name,
+          price: parseInt(t.price || '0')
+        }))
+      }
+    };
+
+    if (imageUrl) {
+      dataToUpdatePrisma.imageUrl = imageUrl;
+    }
+
+    const updatedFood = await prisma.foodItem.update({
+      where: { id },
+      data: dataToUpdatePrisma,
+      include: { toppings: true }
+    });
+
+    return NextResponse.json(updatedFood);
+  } catch (error) {
+    console.error('Error updating food:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const isAdmin = await verifyAdmin(request);
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    const { id } = await params;
+    
+    await prisma.foodItem.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting food:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
