@@ -75,6 +75,8 @@ model Order {
   paymentMethod String
   createdAt     DateTime    @default(now())
   orderItems    OrderItem[]
+  voucherCode   String?
+  discountAmount Int        @default(0)
 
   @@index([createdAt])
 }
@@ -113,4 +115,20 @@ model Favorite {
   createdAt  DateTime @default(now())
 
   @@unique([userId, foodItemId])
+}
+
+model Voucher {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  discountType  String   // "PERCENTAGE" or "FIXED"
+  discountValue Int
+  minPurchase   Int      @default(0)
+  maxDiscount   Int?     // For PERCENTAGE type
+  validFrom     DateTime @default(now())
+  validUntil    DateTime
+  usageLimit    Int      @default(0) // 0 means unlimited
+  usedCount     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

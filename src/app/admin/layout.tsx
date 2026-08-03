@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Utensils, ClipboardList, LogOut, ListPlus } from 'lucide-react';
+import { LayoutDashboard, Utensils, ClipboardList, LogOut, ListPlus, Ticket } from 'lucide-react';
 
 export default function AdminLayout({
   children,
@@ -17,6 +17,7 @@ export default function AdminLayout({
     { name: 'Menu Makanan', href: '/admin/foods', icon: Utensils },
     { name: 'Kelola Topping', href: '/admin/toppings', icon: ListPlus },
     { name: 'Pesanan', href: '/admin/orders', icon: ClipboardList },
+    { name: 'Voucher Promo', href: '/admin/vouchers', icon: Ticket },
   ];
 
   return (

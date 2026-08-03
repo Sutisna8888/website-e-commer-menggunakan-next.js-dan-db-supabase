@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, CreditCard, MapPin, CheckCircle2, QrCode, ClipboardCheck, ArrowRight, Loader2 } from 'lucide-react';
+import { X, CreditCard, MapPin, CheckCircle2, QrCode, ClipboardCheck, ArrowRight, Loader2, Ticket } from 'lucide-react';
 import { CartItem } from '../types';
 
 interface CheckoutModalProps {
@@ -40,6 +40,13 @@ export default function CheckoutModal({
   const [isCopied, setIsCopied] = useState(false);
   const [finalTotalAmount, setFinalTotalAmount] = useState(0);
 
+  // Voucher State
+  const [voucherCodeInput, setVoucherCodeInput] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<{code: string, amount: number, type: string} | null>(null);
+  const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
+  const [voucherError, setVoucherError] = useState<string | null>(null);
+  const [voucherSuccessMsg, setVoucherSuccessMsg] = useState<string | null>(null);
+
   // Addresses States
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -57,6 +64,10 @@ export default function CheckoutModal({
         setSelectedBank('BCA');
         setIsLoading(false);
         setFinalTotalAmount(0); // Reset to 0 initially
+        setVoucherCodeInput('');
+        setAppliedVoucher(null);
+        setVoucherError(null);
+        setVoucherSuccessMsg(null);
       }, 0);
     }
   }, [isOpen]);
@@ -153,8 +164,47 @@ export default function CheckoutModal({
       return;
     }
     setErrorMessage(null);
-    setFinalTotalAmount(totalAmount); // Lock the total amount here!
+    setFinalTotalAmount(Math.max(0, totalAmount - (appliedVoucher?.amount || 0)));
     setStep('payment_detail');
+  };
+
+  const handleApplyVoucher = async () => {
+    if (!voucherCodeInput.trim()) return;
+    setIsApplyingVoucher(true);
+    setVoucherError(null);
+    setVoucherSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/vouchers/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: voucherCodeInput, totalAmount })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setAppliedVoucher({
+          code: data.voucherCode,
+          amount: data.discountAmount,
+          type: data.discountType
+        });
+        setVoucherSuccessMsg(`Voucher berhasil dipasang! Diskon Rp ${data.discountAmount.toLocaleString('id-ID')}`);
+        setVoucherCodeInput('');
+      } else {
+        setVoucherError(data.error || 'Gagal menerapkan voucher');
+        setAppliedVoucher(null);
+      }
+    } catch {
+      setVoucherError('Terjadi kesalahan koneksi');
+    } finally {
+      setIsApplyingVoucher(false);
+    }
+  };
+
+  const removeVoucher = () => {
+    setAppliedVoucher(null);
+    setVoucherSuccessMsg(null);
+    setVoucherError(null);
   };
 
   const copyToClipboard = (text: string) => {
@@ -184,7 +234,9 @@ export default function CheckoutModal({
           address,
           paymentMethod: resolvedPaymentMethod,
           items: cartItems,
-          totalAmount
+          totalAmount: finalTotalAmount,
+          voucherCode: appliedVoucher?.code || null,
+          discountAmount: appliedVoucher?.amount || 0
         })
       });
 
@@ -322,6 +374,50 @@ export default function CheckoutModal({
                 </div>
               </div>
 
+              {/* Promo & Voucher */}
+              <div>
+                <h4 className="text-sm font-bold text-brand-dark-900 flex items-center gap-1.5 mb-3">
+                  <Ticket className="h-4.5 w-4.5 text-brand-orange-600" />
+                  Makin Hemat Pakai Promo
+                </h4>
+                
+                {appliedVoucher ? (
+                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-2xl">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-green-700 flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Kode {appliedVoucher.code} Terpasang!
+                      </span>
+                      <span className="text-xs text-green-600 font-medium">Diskon: -{formatPrice(appliedVoucher.amount)}</span>
+                    </div>
+                    <button onClick={removeVoucher} className="text-xs font-bold text-red-500 hover:text-red-600 px-2 py-1 bg-white rounded-lg border border-red-100">
+                      Hapus
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        placeholder="Masukkan Kode Promo" 
+                        value={voucherCodeInput}
+                        onChange={(e) => setVoucherCodeInput(e.target.value.toUpperCase())}
+                        className="flex-1 p-3 text-sm border border-brand-gray-200 rounded-2xl outline-none focus:border-brand-orange-500 font-bold uppercase"
+                      />
+                      <button 
+                        onClick={handleApplyVoucher}
+                        disabled={isApplyingVoucher || !voucherCodeInput}
+                        className="px-4 py-3 bg-brand-dark-900 text-white text-sm font-bold rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-dark-950 transition-colors flex items-center justify-center min-w-[80px]"
+                      >
+                        {isApplyingVoucher ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Gunakan'}
+                      </button>
+                    </div>
+                    {voucherError && <span className="text-xs font-bold text-red-500 pl-1">{voucherError}</span>}
+                    {voucherSuccessMsg && <span className="text-xs font-bold text-green-600 pl-1">{voucherSuccessMsg}</span>}
+                  </div>
+                )}
+              </div>
+
               {/* Metode Pembayaran */}
               <div>
                 <h4 className="text-sm font-bold text-brand-dark-900 flex items-center gap-1.5">
@@ -389,8 +485,18 @@ export default function CheckoutModal({
                     <span className="font-bold text-brand-dark-900 truncate max-w-[200px]">{getResolvedAddress()}</span>
                   </div>
                   <div className="mt-2 border-t border-brand-gray-200 pt-2 flex justify-between text-sm font-black text-brand-dark-950">
-                    <span>Total Tagihan</span>
-                    <span className="text-base text-brand-orange-600">{formatPrice(finalTotalAmount)}</span>
+                    <span>Subtotal</span>
+                    <span>{formatPrice(totalAmount)}</span>
+                  </div>
+                  {appliedVoucher && (
+                    <div className="flex justify-between text-sm font-black text-green-600">
+                      <span>Diskon ({appliedVoucher.code})</span>
+                      <span>-{formatPrice(appliedVoucher.amount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base font-black text-brand-dark-950 pt-1">
+                    <span>Total Tagihan Akhir</span>
+                    <span className="text-brand-orange-600">{formatPrice(finalTotalAmount)}</span>
                   </div>
                 </div>
               </div>

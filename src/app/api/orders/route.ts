@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { address, paymentMethod, items, totalAmount } = await req.json();
+    const { address, paymentMethod, items, totalAmount, voucherCode, discountAmount } = await req.json();
 
     if (!address || !paymentMethod || !items || items.length === 0) {
       return NextResponse.json(
@@ -39,14 +39,31 @@ export async function POST(req: NextRequest) {
 
     // Gunakan Prisma Transaction untuk menjamin integritas data pesanan
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Buat data Order utama
+      // 1. Validasi dan Update Voucher (Jika ada)
+      if (voucherCode) {
+        const voucher = await tx.voucher.findUnique({ where: { code: voucherCode.toUpperCase() } });
+        if (!voucher || !voucher.isActive) {
+          throw new Error('Kode promo tidak valid atau sudah tidak aktif');
+        }
+        if (voucher.usageLimit > 0 && voucher.usedCount >= voucher.usageLimit) {
+          throw new Error('Kuota promo sudah habis');
+        }
+        await tx.voucher.update({
+          where: { id: voucher.id },
+          data: { usedCount: { increment: 1 } }
+        });
+      }
+
+      // 2. Buat data Order utama
       const order = await tx.order.create({
         data: {
           userId: payload.id,
           totalAmount: Math.round(totalAmount),
           address,
           paymentMethod,
-          status: 'PENDING'
+          status: 'PENDING',
+          voucherCode: voucherCode ? voucherCode.toUpperCase() : null,
+          discountAmount: discountAmount ? Math.round(discountAmount) : 0
         }
       });
 
@@ -88,8 +105,9 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error('Error saat membuat pesanan:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Gagal membuat pesanan baru';
     return NextResponse.json(
-      { error: 'Gagal membuat pesanan baru' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
