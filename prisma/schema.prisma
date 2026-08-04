@@ -27,8 +27,6 @@ model FoodItem {
   price        Int
   imageUrl     String
   category     String
-  rating       Float
-  reviewsCount Int
   prepTime     String
   isAvailable  Boolean     @default(true)
   soldCount    Int         @default(0)

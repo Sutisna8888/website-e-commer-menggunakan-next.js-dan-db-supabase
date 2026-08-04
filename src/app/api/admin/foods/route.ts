@@ -90,8 +90,6 @@ export async function POST(request: Request) {
         imageUrl,
         prepTime,
         isAvailable,
-        rating: 0, // Default for new item
-        reviewsCount: 0, // Default
         toppings: {
           create: toppings.map((t) => ({
             name: t.name,

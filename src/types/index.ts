@@ -20,8 +20,6 @@ export interface FoodItem {
   price: number;
   imageUrl: string;
   category: string;
-  rating: number;
-  reviewsCount: number;
   prepTime: string;
   isAvailable: boolean;
   soldCount?: number;

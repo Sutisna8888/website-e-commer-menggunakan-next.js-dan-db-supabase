@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Loader2, CheckCircle, Clock, Truck, XCircle } from 'lucide-react';
+import { Search, Loader2, CheckCircle, Clock, Truck, XCircle, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface OrderItem {
   id: string;
@@ -42,6 +45,7 @@ export default function AdminOrdersPage() {
 
   // Debounced Search
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -102,6 +106,94 @@ export default function AdminOrdersPage() {
       console.error('Error fetching admin orders:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDownload = async (format: 'excel' | 'pdf') => {
+    try {
+      setIsExporting(true);
+      
+      const now = new Date();
+      let start: Date | null = null;
+      let end: Date = new Date();
+      
+      if (dateRange === 'TODAY') {
+        start = new Date(now.setHours(0,0,0,0));
+      } else if (dateRange === '7_DAYS') {
+        start = new Date();
+        start.setDate(now.getDate() - 7);
+      } else if (dateRange === '30_DAYS') {
+        start = new Date();
+        start.setDate(now.getDate() - 30);
+      } else if (dateRange === 'CUSTOM' && customStartDate && customEndDate) {
+        start = new Date(customStartDate);
+        end = new Date(customEndDate);
+        end.setHours(23,59,59,999);
+      } else if (dateRange === 'ALL') {
+        start = new Date('2000-01-01');
+      }
+
+      const params = new URLSearchParams({
+        search: debouncedSearch,
+        status: statusFilter
+      });
+      if (start) {
+        params.append('startDate', start.toISOString());
+        params.append('endDate', end.toISOString());
+      }
+
+      const res = await fetch(`/api/admin/orders/export?${params.toString()}`);
+      if (!res.ok) throw new Error('Gagal mengambil data laporan');
+      const result = await res.json();
+      const dataToExport = result.data as Order[];
+
+      if (dataToExport.length === 0) {
+        alert('Tidak ada data pesanan untuk diexport.');
+        return;
+      }
+
+      // Format data
+      const rows = dataToExport.map(order => ({
+        'ID Pesanan': order.id.slice(-6).toUpperCase(),
+        'Tanggal': formatDate(order.createdAt),
+        'Nama Pelanggan': order.user?.name || 'Anonim',
+        'Email': order.user?.email || '-',
+        'Pesanan': order.orderItems.map(item => `${item.foodItem.name} (x${item.quantity})`).join(', '),
+        'Total Harga': order.totalAmount,
+        'Status': order.status,
+        'Pembayaran': order.paymentMethod
+      }));
+
+      if (format === 'excel') {
+        const worksheet = XLSX.utils.json_to_sheet(rows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Pesanan");
+        XLSX.writeFile(workbook, `Laporan_Pesanan_${new Date().toISOString().split('T')[0]}.xlsx`);
+      } else if (format === 'pdf') {
+        const doc = new jsPDF('landscape');
+        doc.text('Laporan Pesanan Rasa Nusantara', 14, 15);
+        
+        autoTable(doc, {
+          startY: 20,
+          head: [['ID', 'Tanggal', 'Pelanggan', 'Pesanan', 'Total', 'Status']],
+          body: dataToExport.map(order => [
+            order.id.slice(-6).toUpperCase(),
+            formatDate(order.createdAt),
+            order.user?.name || 'Anonim',
+            order.orderItems.map(item => `${item.foodItem.name} (x${item.quantity})`).join(', '),
+            formatPrice(order.totalAmount),
+            order.status
+          ]),
+          styles: { fontSize: 8 }
+        });
+
+        doc.save(`Laporan_Pesanan_${new Date().toISOString().split('T')[0]}.pdf`);
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Gagal mengekspor laporan.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -246,7 +338,23 @@ export default function AdminOrdersPage() {
 
       <div className="flex items-center justify-between text-sm text-brand-gray-500 font-medium px-1">
         <span>Menampilkan {orders.length} pesanan pada halaman ini</span>
-        <span>Total Keseluruhan: <strong className="text-brand-dark-900">{totalOrders} pesanan</strong> (Sesuai Filter)</span>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => handleDownload('excel')} 
+            disabled={isExporting}
+            className="text-green-600 font-bold flex items-center gap-1 hover:underline disabled:opacity-50"
+          >
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Excel
+          </button>
+          <button 
+            onClick={() => handleDownload('pdf')} 
+            disabled={isExporting}
+            className="text-red-600 font-bold flex items-center gap-1 hover:underline disabled:opacity-50"
+          >
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} PDF
+          </button>
+          <span className="hidden sm:inline">Total: <strong className="text-brand-dark-900">{totalOrders} pesanan</strong> (Sesuai Filter)</span>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-brand-gray-100 overflow-hidden">

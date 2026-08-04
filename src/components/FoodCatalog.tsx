@@ -22,7 +22,7 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
   const [isLoading, setIsLoading] = useState(true);
 
   // Filter & Sorting States
-  const [selectedSort, setSelectedSort] = useState<'popular' | 'price_asc' | 'price_desc' | 'rating_desc'>('popular');
+  const [selectedSort, setSelectedSort] = useState<'popular' | 'price_asc' | 'price_desc'>('popular');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [pricePreset, setPricePreset] = useState<'all' | 'under_20' | '20_35' | 'above_35'>('all');
@@ -184,9 +184,6 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
       if (selectedSort === 'price_desc') {
         return b.price - a.price;
       }
-      if (selectedSort === 'rating_desc') {
-        return b.rating - a.rating;
-      }
       // default: popular (soldCount terlebih dahulu, lalu diurutkan berdasarkan jumlah ulasan)
       const soldA = a.soldCount || 0;
       const soldB = b.soldCount || 0;
@@ -258,13 +255,12 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
           <span className="text-xs font-bold text-brand-gray-400">Urutkan:</span>
           <select
             value={selectedSort}
-            onChange={(e) => setSelectedSort(e.target.value as 'popular' | 'price_asc' | 'price_desc' | 'rating_desc')}
+            onChange={(e) => setSelectedSort(e.target.value as 'popular' | 'price_asc' | 'price_desc')}
             className="rounded-2xl border border-brand-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-brand-dark-900 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20 cursor-pointer min-w-[200px]"
           >
-            <option value="popular">Terpopuler</option>
-            <option value="price_asc">Harga: Terendah ke Tertinggi</option>
-            <option value="price_desc">Harga: Tertinggi ke Terendah</option>
-            <option value="rating_desc">Rating Tertinggi</option>
+            <option value="popular">Paling Populer</option>
+            <option value="price_asc">Harga Terendah</option>
+            <option value="price_desc">Harga Tertinggi</option>
           </select>
         </div>
 

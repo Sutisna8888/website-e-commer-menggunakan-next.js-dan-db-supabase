@@ -38,22 +38,42 @@ export async function GET(request: Request) {
       where: { role: 'USER' }
     });
 
-    // Menu terpopuler (berdasarkan reviewsCount atau quantity order item di masa depan)
-    // Sementara kita ambil top 5 berdasarkan reviewsCount dan rating
+    const totalFoods = await prisma.foodItem.count();
+    const totalToppings = await prisma.topping.count();
+
+    const itemsSoldResult = await prisma.orderItem.aggregate({
+      where: {
+        order: {
+          status: 'DELIVERED'
+        }
+      },
+      _sum: { quantity: true }
+    });
+    const totalItemsSold = itemsSoldResult._sum.quantity || 0;
+
+    // Menu terpopuler berdasarkan terjual
     const popularFoods = await prisma.foodItem.findMany({
       take: 5,
-      orderBy: [
-        { reviewsCount: 'desc' },
-        { rating: 'desc' }
-      ],
+      orderBy: { soldCount: 'desc' },
       select: {
         id: true,
         name: true,
         category: true,
         price: true,
         imageUrl: true,
-        rating: true,
-        reviewsCount: true,
+        soldCount: true,
+      }
+    });
+
+    const recentOrders = await prisma.order.findMany({
+      take: 4,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        totalAmount: true,
+        status: true,
+        createdAt: true,
+        user: { select: { name: true, email: true } }
       }
     });
 
@@ -62,7 +82,11 @@ export async function GET(request: Request) {
       activeOrders,
       allOrders,
       totalCustomers,
-      popularFoods
+      totalFoods,
+      totalToppings,
+      totalItemsSold,
+      popularFoods,
+      recentOrders
     });
 
   } catch (error) {

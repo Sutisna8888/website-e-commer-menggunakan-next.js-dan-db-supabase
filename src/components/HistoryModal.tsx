@@ -34,8 +34,6 @@ export interface OrderHistoryItem {
       price: number;
       imageUrl: string;
       category: string;
-      rating: number;
-      reviewsCount: number;
       prepTime: string;
       isAvailable: boolean;
       isPopular: boolean;
