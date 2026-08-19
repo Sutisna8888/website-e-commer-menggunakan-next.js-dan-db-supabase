@@ -184,13 +184,13 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
       if (selectedSort === 'price_desc') {
         return b.price - a.price;
       }
-      // default: popular (soldCount terlebih dahulu, lalu diurutkan berdasarkan jumlah ulasan)
+      // default: popular (soldCount terlebih dahulu)
       const soldA = a.soldCount || 0;
       const soldB = b.soldCount || 0;
       if (soldA !== soldB) {
         return soldB - soldA;
       }
-      return b.reviewsCount - a.reviewsCount;
+      return 0;
     });
 
   const hasActiveFilters = minPrice !== '' || maxPrice !== '';

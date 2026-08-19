@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ArrowRight, Clock, Star, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 
 interface HeroProps {
   onActionClick: () => void;
@@ -51,38 +51,7 @@ export default function Hero({ onActionClick }: HeroProps) {
               </button>
             </div>
             
-            {/* Trust Badges */}
-            <div className="mt-8 grid grid-cols-3 gap-4 border-t border-brand-gray-100 pt-6 text-left">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange-50 text-brand-orange-600">
-                  <Clock className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-brand-dark-900 sm:text-base">20-30 Menit</h4>
-                  <p className="text-xs text-brand-gray-500">Estimasi Pengantaran</p>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-green-50 text-brand-green-600">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-brand-dark-900 sm:text-base">100% Higienis</h4>
-                  <p className="text-xs text-brand-gray-500">Protokol Kebersihan Ketat</p>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange-50 text-brand-orange-600">
-                  <Star className="h-5 w-5 fill-brand-orange-500 text-brand-orange-500" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-brand-dark-900 sm:text-base">Rating 4.8+</h4>
-                  <p className="text-xs text-brand-gray-500">Kepuasan Pelanggan</p>
-                </div>
-              </div>
-            </div>
+
           </div>
           
           {/* Image Content */}

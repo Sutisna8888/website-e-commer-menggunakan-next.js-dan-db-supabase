@@ -77,6 +77,36 @@ export async function GET(request: Request) {
       }
     });
 
+    // Data pendapatan 7 hari terakhir untuk chart
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+    const ordersLast7Days = await prisma.order.findMany({
+      where: { 
+        status: 'DELIVERED',
+        createdAt: { gte: sevenDaysAgo }
+      },
+      select: { createdAt: true, totalAmount: true }
+    });
+
+    const chartData = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const dateString = d.toLocaleDateString('id-ID', { weekday: 'short' }); // Contoh: 'Sen', 'Sel'
+      
+      const dailyOrders = ordersLast7Days.filter(o => 
+        o.createdAt.getDate() === d.getDate() && 
+        o.createdAt.getMonth() === d.getMonth() &&
+        o.createdAt.getFullYear() === d.getFullYear()
+      );
+      
+      return {
+        name: dateString,
+        revenue: dailyOrders.reduce((sum, order) => sum + order.totalAmount, 0),
+      };
+    });
+
     return NextResponse.json({
       totalRevenue,
       activeOrders,
@@ -86,7 +116,8 @@ export async function GET(request: Request) {
       totalToppings,
       totalItemsSold,
       popularFoods,
-      recentOrders
+      recentOrders,
+      chartData
     });
 
   } catch (error) {

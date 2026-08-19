@@ -1,4 +1,4 @@
-import { FoodItem } from '../types';
+﻿import { FoodItem } from '../types';
 
 export const FOOD_ITEMS: FoodItem[] = [
   {
@@ -7,8 +7,8 @@ export const FOOD_ITEMS: FoodItem[] = [
     description: 'Nasi goreng dengan bumbu rempah pilihan, dilengkapi telur mata sapi, ayam suwir, acar segar, dan kerupuk renyah.',
     price: 28000,
     imageUrl: '/images/nasi-goreng.png',
-    category: 'MAKANAN UTAMA',
-    prepTime: '10 mins',
+    category: 'Makanan Utama',
+    prepTime: '10-15 mnt',
     isAvailable: true,
     soldCount: 50
   },
@@ -18,8 +18,8 @@ export const FOOD_ITEMS: FoodItem[] = [
     description: '10 tusuk sate daging ayam pilihan yang empuk, dibalur saus kacang gurih khas Madura dan kecap manis, ditaburi bawang goreng.',
     price: 32000,
     imageUrl: '/images/sate-ayam.png',
-    category: 'MAKANAN UTAMA',
-    prepTime: '20 mins',
+    category: 'Makanan Utama',
+    prepTime: '15-20 mnt',
     isAvailable: true,
     soldCount: 50
   },
@@ -51,8 +51,8 @@ export const FOOD_ITEMS: FoodItem[] = [
     description: 'Menu sehat tradisional berupa sayuran rebus segar, tahu, tempe, kentang, telur, disiram dengan bumbu kacang kental yang medok.',
     price: 22000,
     imageUrl: '/images/gado-gado.png',
-    category: 'MINUMAN',
-    prepTime: '5 mins',
+    category: 'Sehat',
+    prepTime: '10-15 mnt',
     isAvailable: true,
     soldCount: 50
   },
@@ -73,8 +73,8 @@ export const FOOD_ITEMS: FoodItem[] = [
     description: 'Es teh melati segar dengan gula asli, ditambah biji selasih bertekstur, serta potongan jelly kelapa kenyal yang manis.',
     price: 10000,
     imageUrl: '/images/es-teh.png',
-    category: 'MINUMAN',
-    prepTime: '5 mins',
+    category: 'Minuman',
+    prepTime: '3-5 mnt',
     isAvailable: true,
     soldCount: 50
   },
@@ -85,8 +85,6 @@ export const FOOD_ITEMS: FoodItem[] = [
     price: 18000,
     imageUrl: '/images/jus-alpukat.png',
     category: 'Minuman',
-    rating: 4.7,
-    reviewsCount: 154,
     prepTime: '5-8 mnt',
     isAvailable: true,
     soldCount: 0

@@ -39,7 +39,10 @@ interface Stats {
     createdAt: string;
     user: { name: string; email: string };
   }[];
+  chartData: { name: string; revenue: number; }[];
 }
+
+import RevenueChart from '@/components/RevenueChart';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -205,6 +208,20 @@ export default function AdminDashboard() {
             </div>
           );
         })}
+      </div>
+
+      {/* Revenue Chart Section */}
+      <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-sm border border-white/60 hover:shadow-md transition-shadow duration-300 mt-8">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h3 className="text-xl font-black text-brand-dark-900 flex items-center gap-2">
+              <PieChart className="w-6 h-6 text-brand-orange-500" />
+              Tren Pendapatan Mingguan
+            </h3>
+            <p className="text-sm text-brand-gray-500 mt-1">Total pendapatan dalam 7 hari terakhir</p>
+          </div>
+        </div>
+        <RevenueChart data={stats.chartData} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 pt-4">
