@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Search, User, Menu, X, ClipboardList, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -28,6 +29,15 @@ export default function Header({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch avatar saat user sudah login
   useEffect(() => {
@@ -51,16 +61,20 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-brand-gray-100 bg-white/80 backdrop-blur-md transition-all duration-300">
+    <header className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${isScrolled ? 'bg-white/80 dark:bg-brand-dark-950/80 backdrop-blur-md shadow-sm border-brand-gray-100 dark:border-brand-dark-800' : 'bg-white dark:bg-brand-dark-950 border-transparent'} `}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="flex h-16 sm:h-20 items-center justify-between gap-4 sm:gap-8">
           
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-extrabold tracking-tight text-brand-orange-600 sm:text-3xl">
-                Rasa<span className="text-brand-dark-900">Nusantara</span>
-              </span>
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center gap-2 transition-transform hover:scale-105">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand-orange-500 to-brand-orange-600 text-white shadow-lg shadow-brand-orange-500/30">
+                <span className="text-xl sm:text-2xl font-black italic tracking-tighter">RN</span>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-black tracking-tight text-brand-dark-900 dark:text-white">Rasa Nusantara</h1>
+                <p className="text-[10px] font-bold text-brand-gray-500 dark:text-brand-gray-400 tracking-widest uppercase">Citra Rasa Asli</p>
+              </div>
             </Link>
           </div>
 
@@ -75,7 +89,7 @@ export default function Header({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Cari makanan favoritmu..."
-                className="w-full rounded-full border border-brand-gray-200 bg-brand-gray-50 py-2 pl-10 pr-4 text-sm text-brand-dark-900 placeholder-brand-gray-400 outline-none transition-all focus:border-brand-orange-500 focus:bg-white focus:ring-2 focus:ring-brand-orange-500/20"
+                className="w-full rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-brand-gray-50 dark:bg-brand-dark-800 py-2 pl-10 pr-4 text-sm text-brand-dark-900 dark:text-white placeholder-brand-gray-400 dark:placeholder-brand-gray-500 outline-none transition-all focus:border-brand-orange-500 focus:bg-white dark:focus:bg-brand-dark-900 focus:ring-2 focus:ring-brand-orange-500/20"
               />
             </div>
           </div>
@@ -83,7 +97,7 @@ export default function Header({
           {/* Action Buttons */}
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Search Toggle for Mobile */}
-            <button className="rounded-full p-2 text-brand-dark-800 hover:bg-brand-gray-100 md:hidden">
+            <button className="rounded-full p-2 text-brand-dark-800 dark:text-brand-gray-300 hover:bg-brand-gray-100 dark:hover:bg-brand-dark-800 md:hidden transition-colors">
               <Search className="h-5 w-5" />
             </button>
 
@@ -91,7 +105,7 @@ export default function Header({
             {userEmail && (
               <Link
                 href="/favorites"
-                className="relative rounded-full p-2 text-brand-dark-800 transition-colors hover:bg-brand-gray-100"
+                className="relative rounded-full p-2 text-brand-dark-800 dark:text-brand-gray-300 transition-colors hover:bg-brand-gray-100 dark:hover:bg-brand-dark-800"
                 title="Favorit Saya"
               >
                 <Heart className="h-6 w-6" />
@@ -102,17 +116,19 @@ export default function Header({
             {userEmail && (
               <button
                 onClick={onHistoryClick}
-                className="relative rounded-full p-2 text-brand-dark-800 transition-colors hover:bg-brand-gray-100"
+                className="relative rounded-full p-2 text-brand-dark-800 dark:text-brand-gray-300 transition-colors hover:bg-brand-gray-100 dark:hover:bg-brand-dark-800"
                 title="Riwayat Pesanan"
               >
                 <ClipboardList className="h-6 w-6" />
               </button>
             )}
+            
+            <ThemeToggle />
 
             {/* Cart Button */}
             <button
               onClick={onCartClick}
-              className="relative rounded-full p-2 text-brand-dark-800 transition-colors hover:bg-brand-gray-100"
+              className="relative rounded-full p-2 text-brand-dark-800 dark:text-brand-gray-300 transition-colors hover:bg-brand-gray-100 dark:hover:bg-brand-dark-800"
             >
               <ShoppingBag className="h-6 w-6" />
               {cartItemsCount > 0 && (
@@ -127,7 +143,7 @@ export default function Header({
               <div className="relative hidden items-center gap-3 sm:flex">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-1.5 rounded-full border border-brand-gray-200 bg-white p-1 pr-3 hover:bg-brand-gray-50 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 p-1 pr-3 hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700 transition-colors cursor-pointer"
                 >
                   {avatarUrl ? (
                     <Image
@@ -142,7 +158,7 @@ export default function Header({
                       {userEmail.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <span className="text-xs font-bold text-brand-dark-900 truncate max-w-[80px]">
+                  <span className="text-xs font-bold text-brand-dark-900 dark:text-white truncate max-w-[80px]">
                     {userEmail.split('@')[0]}
                   </span>
                 </button>
@@ -154,23 +170,23 @@ export default function Header({
                       className="fixed inset-0 z-10" 
                       onClick={() => setIsDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 top-11 z-20 w-44 rounded-2xl border border-brand-gray-150 bg-white p-2 shadow-xl animate-fade-in flex flex-col gap-0.5">
+                    <div className="absolute right-0 top-11 z-20 w-44 rounded-2xl border border-brand-gray-150 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 p-2 shadow-xl animate-fade-in flex flex-col gap-0.5">
                       <a
                         href="/profile"
-                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 hover:bg-brand-gray-50 transition-colors"
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 dark:text-white hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700 transition-colors"
                       >
                         👤 Profil Saya
                       </a>
                       <Link
                         href="/favorites"
-                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 hover:bg-brand-gray-50 transition-colors"
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 dark:text-white hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700 transition-colors"
                       >
                         ❤️ Favorit Saya
                       </Link>
                       {userRole === 'ADMIN' && (
                         <Link
                           href="/admin"
-                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-orange-600 bg-brand-orange-50 hover:bg-brand-orange-100 transition-colors"
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-orange-600 dark:text-brand-orange-500 bg-brand-orange-50 dark:bg-brand-orange-500/10 hover:bg-brand-orange-100 dark:hover:bg-brand-orange-500/20 transition-colors"
                         >
                           ⚙️ Dashboard Admin
                         </Link>
@@ -180,17 +196,17 @@ export default function Header({
                           setIsDropdownOpen(false);
                           onHistoryClick();
                         }}
-                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 hover:bg-brand-gray-50 transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-brand-dark-900 dark:text-white hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700 transition-colors cursor-pointer"
                       >
                         ⏳ Riwayat Pesanan
                       </button>
-                      <hr className="my-1 border-brand-gray-100" />
+                      <hr className="my-1 border-brand-gray-100 dark:border-brand-dark-700" />
                       <button
                         onClick={() => {
                           setIsDropdownOpen(false);
                           onLoginClick();
                         }}
-                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors cursor-pointer"
                       >
                         🚪 Keluar
                       </button>
@@ -211,7 +227,7 @@ export default function Header({
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="rounded-full p-2 text-brand-dark-800 hover:bg-brand-gray-100 sm:hidden"
+              className="rounded-full p-2 text-brand-dark-800 dark:text-brand-gray-300 hover:bg-brand-gray-100 dark:hover:bg-brand-dark-800 sm:hidden transition-colors"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -221,7 +237,7 @@ export default function Header({
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="border-t border-brand-gray-100 bg-white px-4 py-4 shadow-lg sm:hidden">
+        <div className="border-t border-brand-gray-100 dark:border-brand-dark-800 bg-white dark:bg-brand-dark-950 px-4 py-4 shadow-lg sm:hidden">
           <div className="flex flex-col gap-4">
             {/* Search Input for Mobile */}
             <div className="relative">
@@ -233,14 +249,14 @@ export default function Header({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Cari makanan..."
-                className="w-full rounded-full border border-brand-gray-200 bg-brand-gray-50 py-2 pl-10 pr-4 text-sm text-brand-dark-900 outline-none"
+                className="w-full rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-brand-gray-50 dark:bg-brand-dark-800 py-2 pl-10 pr-4 text-sm text-brand-dark-900 dark:text-white outline-none"
               />
             </div>
             
             {/* Login Button Mobile */}
             {userEmail ? (
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-brand-dark-900">
+                <div className="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-brand-dark-900 dark:text-white">
                   {avatarUrl ? (
                     <Image
                       src={avatarUrl}
@@ -250,7 +266,7 @@ export default function Header({
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange-100 font-bold text-brand-orange-700">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange-100 dark:bg-brand-orange-500/20 font-bold text-brand-orange-700 dark:text-brand-orange-500">
                       {userEmail.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -259,7 +275,7 @@ export default function Header({
                 <Link
                   href="/favorites"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 bg-white py-2 text-sm font-semibold text-brand-dark-800"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 py-2 text-sm font-semibold text-brand-dark-800 dark:text-brand-gray-300"
                 >
                   <Heart className="h-4 w-4 text-brand-orange-600" />
                   Favorit Saya
@@ -269,7 +285,7 @@ export default function Header({
                     onHistoryClick();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 bg-white py-2 text-sm font-semibold text-brand-dark-800"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 py-2 text-sm font-semibold text-brand-dark-800 dark:text-brand-gray-300"
                 >
                   <ClipboardList className="h-4 w-4 text-brand-orange-600" />
                   Riwayat Pesanan
@@ -279,7 +295,7 @@ export default function Header({
                     onLoginClick();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 bg-white py-2 text-sm font-semibold text-brand-dark-800"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 py-2 text-sm font-semibold text-brand-dark-800 dark:text-brand-gray-300"
                 >
                   Keluar
                 </button>

@@ -211,19 +211,19 @@ export default function AdminFoodsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-gray-400 dark:text-brand-gray-500 w-5 h-5" />
             <input
               type="text"
               placeholder="Cari menu makanan..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-gray-200 dark:border-brand-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 focus:border-transparent transition-all bg-white dark:bg-brand-dark-900 text-brand-dark-900 dark:text-white placeholder-brand-gray-400 dark:placeholder-brand-gray-500"
             />
           </div>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-brand-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 bg-white font-semibold text-brand-dark-900"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-brand-gray-200 dark:border-brand-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 bg-white dark:bg-brand-dark-900 font-semibold text-brand-dark-900 dark:text-white"
           >
             <option value="Semua">Semua Kategori</option>
             <option value="Makanan">Makanan</option>
@@ -234,18 +234,18 @@ export default function AdminFoodsPage() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-brand-orange-600 hover:bg-brand-orange-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
+          className="flex items-center gap-2 bg-brand-orange-600 dark:bg-brand-orange-500 hover:bg-brand-orange-700 dark:hover:bg-brand-orange-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
         >
           <Plus className="w-5 h-5" />
           Tambah Menu Baru
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-brand-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-brand-dark-900/50 backdrop-blur-xl rounded-3xl shadow-sm border border-brand-gray-100 dark:border-brand-dark-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-brand-gray-50 border-b border-brand-gray-100 text-brand-gray-500 text-sm font-semibold">
+              <tr className="bg-brand-gray-50 dark:bg-brand-dark-800/50 border-b border-brand-gray-100 dark:border-brand-dark-700 text-brand-gray-500 dark:text-brand-gray-400 text-sm font-semibold">
                 <th className="py-4 px-6">Menu</th>
                 <th className="py-4 px-6">Kategori</th>
                 <th className="py-4 px-6">Harga</th>
@@ -262,34 +262,34 @@ export default function AdminFoodsPage() {
                 </tr>
               ) : filteredFoods.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-brand-gray-500">
+                  <td colSpan={5} className="py-12 text-center text-brand-gray-500 dark:text-brand-gray-400">
                     Tidak ada menu yang ditemukan
                   </td>
                 </tr>
               ) : (
                 filteredFoods.map((food) => (
-                  <tr key={food.id} className="border-b border-brand-gray-50 hover:bg-brand-gray-50/50 transition-colors">
+                  <tr key={food.id} className="border-b border-brand-gray-50 dark:border-brand-dark-800/50 hover:bg-brand-gray-50/50 dark:hover:bg-brand-dark-800/30 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-4">
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-brand-gray-100 shrink-0">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-brand-gray-100 dark:bg-brand-dark-800 shrink-0">
                           {food.imageUrl ? (
                             <Image src={food.imageUrl} alt={food.name} fill className="object-cover" />
                           ) : (
-                            <ImageIcon className="w-6 h-6 m-3 text-brand-gray-300" />
+                            <ImageIcon className="w-6 h-6 m-3 text-brand-gray-300 dark:text-brand-gray-600" />
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-brand-dark-900">{food.name}</p>
-                          <p className="text-xs text-brand-gray-500 truncate max-w-[200px]">{food.description}</p>
+                          <p className="font-bold text-brand-dark-900 dark:text-white">{food.name}</p>
+                          <p className="text-xs text-brand-gray-500 dark:text-brand-gray-400 truncate max-w-[200px]">{food.description}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-6">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand-gray-100 text-brand-gray-600">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand-gray-100 dark:bg-brand-dark-800 text-brand-gray-600 dark:text-brand-gray-300">
                         {food.category}
                       </span>
                     </td>
-                    <td className="py-4 px-6 font-bold text-brand-orange-600">
+                    <td className="py-4 px-6 font-bold text-brand-orange-600 dark:text-brand-orange-500">
                       {formatPrice(food.price)}
                     </td>
                     <td className="py-4 px-6">

@@ -127,13 +127,13 @@ export default function VouchersPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div className="flex justify-between items-center bg-white p-6 rounded-3xl shadow-sm border border-brand-gray-100">
+      <div className="flex justify-between items-center bg-white dark:bg-brand-dark-900/50 backdrop-blur-xl p-6 rounded-3xl shadow-sm border border-brand-gray-100 dark:border-brand-dark-800">
         <div>
-          <h1 className="text-2xl font-black text-brand-dark-900 flex items-center gap-2">
+          <h1 className="text-2xl font-black text-brand-dark-900 dark:text-white flex items-center gap-2">
             <Ticket className="w-8 h-8 text-brand-orange-500" />
             Kelola Voucher & Promo
           </h1>
-          <p className="text-brand-gray-500 mt-1">Buat kode diskon untuk pelanggan setia Anda.</p>
+          <p className="text-brand-gray-500 dark:text-brand-gray-400 mt-1">Buat kode diskon untuk pelanggan setia Anda.</p>
         </div>
         <button
           onClick={() => openModal()}
@@ -144,11 +144,11 @@ export default function VouchersPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-brand-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-brand-dark-900/50 backdrop-blur-xl rounded-3xl shadow-sm border border-brand-gray-100 dark:border-brand-dark-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-brand-gray-50 text-brand-gray-500 text-sm font-semibold border-b border-brand-gray-100">
+              <tr className="bg-brand-gray-50 dark:bg-brand-dark-800/50 text-brand-gray-500 dark:text-brand-gray-400 text-sm font-semibold border-b border-brand-gray-100 dark:border-brand-dark-700">
                 <th className="px-6 py-4">KODE VOUCHER</th>
                 <th className="px-6 py-4">DISKON</th>
                 <th className="px-6 py-4">MIN. BELANJA</th>
@@ -161,41 +161,41 @@ export default function VouchersPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-brand-gray-500">Memuat data...</td>
+                  <td colSpan={7} className="py-12 text-center text-brand-gray-500 dark:text-brand-gray-400">Memuat data...</td>
                 </tr>
               ) : vouchers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-brand-gray-500">Belum ada voucher.</td>
+                  <td colSpan={7} className="py-12 text-center text-brand-gray-500 dark:text-brand-gray-400">Belum ada voucher.</td>
                 </tr>
               ) : (
                 vouchers.map(voucher => (
-                  <tr key={voucher.id} className="border-b border-brand-gray-50 hover:bg-brand-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-brand-dark-900">
-                      <span className="bg-brand-gray-100 px-3 py-1 rounded-lg border border-brand-gray-200">
+                  <tr key={voucher.id} className="border-b border-brand-gray-50 dark:border-brand-dark-800/50 hover:bg-brand-gray-50/50 dark:hover:bg-brand-dark-800/30 transition-colors">
+                    <td className="px-6 py-4 font-bold text-brand-dark-900 dark:text-white">
+                      <span className="bg-brand-gray-100 dark:bg-brand-dark-800 px-3 py-1 rounded-lg border border-brand-gray-200 dark:border-brand-dark-700">
                         {voucher.code}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-brand-gray-600 font-medium">
+                    <td className="px-6 py-4 text-brand-gray-600 dark:text-brand-gray-300 font-medium">
                       {voucher.discountType === 'PERCENTAGE' 
                         ? `${voucher.discountValue}% (Max ${voucher.maxDiscount ? formatPrice(voucher.maxDiscount) : '-'})` 
                         : formatPrice(voucher.discountValue)}
                     </td>
-                    <td className="px-6 py-4 text-brand-gray-600 font-medium">{formatPrice(voucher.minPurchase)}</td>
-                    <td className="px-6 py-4 text-brand-gray-600 font-medium">{new Date(voucher.validUntil).toLocaleDateString('id-ID')}</td>
-                    <td className="px-6 py-4 text-brand-gray-600 font-medium">
+                    <td className="px-6 py-4 text-brand-gray-600 dark:text-brand-gray-300 font-medium">{formatPrice(voucher.minPurchase)}</td>
+                    <td className="px-6 py-4 text-brand-gray-600 dark:text-brand-gray-300 font-medium">{new Date(voucher.validUntil).toLocaleDateString('id-ID')}</td>
+                    <td className="px-6 py-4 text-brand-gray-600 dark:text-brand-gray-300 font-medium">
                       {voucher.usedCount} / {voucher.usageLimit === 0 ? 'Tak Terbatas' : voucher.usageLimit}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${voucher.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${voucher.isActive ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400'}`}>
                         {voucher.isActive ? 'AKTIF' : 'NONAKTIF'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <button onClick={() => openModal(voucher)} className="p-2 bg-brand-gray-50 text-brand-gray-600 rounded-lg hover:bg-brand-gray-100 transition-colors">
+                        <button onClick={() => openModal(voucher)} className="p-2 bg-brand-gray-50 dark:bg-brand-dark-800 text-brand-gray-600 dark:text-brand-gray-400 rounded-lg hover:bg-brand-gray-100 dark:hover:bg-brand-dark-700 transition-colors">
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(voucher.id)} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                        <button onClick={() => handleDelete(voucher.id)} className="p-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

@@ -25,11 +25,11 @@ export default function FoodCard({ item, onOrderClick, isFavorited = false, onTo
   return (
     <div 
       onClick={() => onOrderClick(item)}
-      className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white border border-brand-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-premium-hover"
+      className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white dark:bg-brand-dark-900 border border-brand-gray-100 dark:border-brand-dark-800 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-premium-hover"
     >
       
       {/* Food Image */}
-      <div className="relative aspect-square w-full overflow-hidden bg-brand-gray-50">
+      <div className="relative aspect-square w-full overflow-hidden bg-brand-gray-50 dark:bg-brand-dark-800">
         <Image
           src={item.imageUrl}
           alt={item.name}
@@ -65,18 +65,18 @@ export default function FoodCard({ item, onOrderClick, isFavorited = false, onTo
           {item.category}
         </span>
         
-        <h3 className="mt-1 line-clamp-1 text-lg font-bold text-brand-dark-900 group-hover:text-brand-orange-600 transition-colors">
+        <h3 className="mt-1 line-clamp-1 text-lg font-bold text-brand-dark-900 dark:text-white group-hover:text-brand-orange-600 transition-colors">
           {item.name}
         </h3>
         
-        <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-brand-gray-500">
+        <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-brand-gray-500 dark:text-brand-gray-400">
           {item.description}
         </p>
 
 
 
         {/* Price & Action */}
-        <div className="mt-5 flex items-center justify-between gap-2 border-t border-brand-gray-100 pt-4">
+        <div className="mt-5 flex items-center justify-between gap-2 border-t border-brand-gray-100 dark:border-brand-dark-800 pt-4">
           <div>
             <p className="text-[10px] text-brand-gray-400">Harga</p>
             <p className="text-lg font-black text-brand-orange-600">
@@ -89,7 +89,7 @@ export default function FoodCard({ item, onOrderClick, isFavorited = false, onTo
               e.stopPropagation();
               onOrderClick(item);
             }}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-dark-900 text-white transition-all hover:bg-brand-orange-600 hover:shadow-premium-hover"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-dark-900 dark:bg-brand-gray-100 text-white dark:text-brand-dark-900 transition-all hover:bg-brand-orange-600 dark:hover:bg-brand-orange-500 hover:shadow-premium-hover"
             aria-label="Tambah ke keranjang"
           >
             <ShoppingCart className="h-5 w-5" />

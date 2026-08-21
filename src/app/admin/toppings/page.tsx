@@ -135,19 +135,19 @@ export default function AdminToppingsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-gray-400 dark:text-brand-gray-500 w-5 h-5" />
             <input
               type="text"
               placeholder="Cari master topping..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-brand-gray-200 dark:border-brand-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 focus:border-transparent transition-all bg-white dark:bg-brand-dark-900 text-brand-dark-900 dark:text-white placeholder-brand-gray-400 dark:placeholder-brand-gray-500"
             />
           </div>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-brand-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 bg-white font-semibold text-brand-dark-900"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-brand-gray-200 dark:border-brand-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-orange-500 bg-white dark:bg-brand-dark-900 font-semibold text-brand-dark-900 dark:text-white"
           >
             <option value="Semua">Semua Kategori</option>
             {CATEGORY_OPTIONS.map(opt => (
@@ -157,18 +157,18 @@ export default function AdminToppingsPage() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-brand-orange-600 hover:bg-brand-orange-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
+          className="flex items-center gap-2 bg-brand-orange-600 dark:bg-brand-orange-500 hover:bg-brand-orange-700 dark:hover:bg-brand-orange-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
         >
           <Plus className="w-5 h-5" />
           Tambah Topping
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-brand-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-brand-dark-900/50 backdrop-blur-xl rounded-3xl shadow-sm border border-brand-gray-100 dark:border-brand-dark-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-brand-gray-50 border-b border-brand-gray-100 text-brand-gray-500 text-sm font-semibold">
+              <tr className="bg-brand-gray-50 dark:bg-brand-dark-800/50 border-b border-brand-gray-100 dark:border-brand-dark-700 text-brand-gray-500 dark:text-brand-gray-400 text-sm font-semibold">
                 <th className="py-4 px-6">Nama Topping</th>
                 <th className="py-4 px-6">Harga</th>
                 <th className="py-4 px-6">Kategori</th>
@@ -184,27 +184,27 @@ export default function AdminToppingsPage() {
                 </tr>
               ) : filteredToppings.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-brand-gray-500">
+                  <td colSpan={4} className="py-12 text-center text-brand-gray-500 dark:text-brand-gray-400">
                     Tidak ada topping yang ditemukan
                   </td>
                 </tr>
               ) : (
                 filteredToppings.map((topping) => (
-                  <tr key={topping.id} className="border-b border-brand-gray-50 hover:bg-brand-gray-50/50 transition-colors">
-                    <td className="py-4 px-6 font-bold text-brand-dark-900">
+                  <tr key={topping.id} className="border-b border-brand-gray-50 dark:border-brand-dark-800/50 hover:bg-brand-gray-50/50 dark:hover:bg-brand-dark-800/30 transition-colors">
+                    <td className="py-4 px-6 font-bold text-brand-dark-900 dark:text-white">
                       {topping.name}
                     </td>
-                    <td className="py-4 px-6 font-bold text-brand-orange-600">
+                    <td className="py-4 px-6 font-bold text-brand-orange-600 dark:text-brand-orange-500">
                       {formatPrice(topping.price)}
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex flex-wrap gap-1">
                         {topping.categories ? topping.categories.split(',').map((cat, i) => (
-                          <span key={i} className="px-2 py-1 bg-brand-gray-100 text-brand-gray-600 text-xs font-semibold rounded-md">
+                          <span key={i} className="px-2 py-1 bg-brand-gray-100 dark:bg-brand-dark-800 text-brand-gray-600 dark:text-brand-gray-300 text-xs font-semibold rounded-md">
                             {cat}
                           </span>
                         )) : (
-                          <span className="text-brand-gray-400 text-xs italic">Semua</span>
+                          <span className="text-brand-gray-400 dark:text-brand-gray-500 text-xs italic">Semua</span>
                         )}
                       </div>
                     </td>

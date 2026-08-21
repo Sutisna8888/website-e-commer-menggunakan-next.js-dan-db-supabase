@@ -200,11 +200,11 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
       
       {/* Title Section */}
       <div className="flex flex-col items-center text-center">
-        <h2 className="text-3xl font-black tracking-tight text-brand-dark-950 sm:text-4xl">
+        <h2 className="text-3xl font-black tracking-tight text-brand-dark-950 dark:text-white sm:text-4xl">
           Jelajahi Menu Terlezat Kami
         </h2>
         <div className="mt-2 h-1 w-16 rounded-full bg-brand-orange-500"></div>
-        <p className="mt-4 max-w-2xl text-sm text-brand-gray-500 sm:text-base">
+        <p className="mt-4 max-w-2xl text-sm text-brand-gray-500 dark:text-brand-gray-400 sm:text-base">
           Pilih dari berbagai macam hidangan khas Nusantara yang disiapkan oleh koki berpengalaman kami dengan bahan-bahan segar pilihan.
         </p>
       </div>
@@ -221,7 +221,7 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
             className={`rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 ${
               selectedCategory === category
                 ? 'bg-brand-orange-600 text-white shadow-premium'
-                : 'bg-brand-gray-100 text-brand-dark-800 hover:bg-brand-gray-200'
+                : 'bg-brand-gray-100 dark:bg-brand-dark-800 text-brand-dark-800 dark:text-brand-gray-200 hover:bg-brand-gray-200 dark:hover:bg-brand-dark-700'
             }`}
           >
             {category}
@@ -230,15 +230,15 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
       </div>
 
       {/* Control Row: Filter Toggle & Sort Select */}
-      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-b border-brand-gray-100 py-4.5">
+      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-b border-brand-gray-100 dark:border-brand-dark-800 py-4.5">
         
         {/* Toggle Filter Button */}
         <button
           onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
           className={`flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-bold border transition-all duration-300 cursor-pointer ${
             isFilterPanelOpen || hasActiveFilters
-              ? 'border-brand-orange-500 bg-brand-orange-50/20 text-brand-orange-600'
-              : 'border-brand-gray-200 bg-white text-brand-gray-600 hover:bg-brand-gray-55'
+              ? 'border-brand-orange-500 dark:border-brand-orange-500/50 bg-brand-orange-50/20 dark:bg-brand-orange-500/10 text-brand-orange-600 dark:text-brand-orange-500'
+              : 'border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 text-brand-gray-600 dark:text-brand-gray-300 hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700'
           }`}
         >
           <SlidersHorizontal className="h-4 w-4" />
@@ -252,11 +252,11 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
 
         {/* Sort Selector */}
         <div className="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end">
-          <span className="text-xs font-bold text-brand-gray-400">Urutkan:</span>
+          <span className="text-xs font-bold text-brand-gray-400 dark:text-brand-gray-500">Urutkan:</span>
           <select
             value={selectedSort}
             onChange={(e) => setSelectedSort(e.target.value as 'popular' | 'price_asc' | 'price_desc')}
-            className="rounded-2xl border border-brand-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-brand-dark-900 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20 cursor-pointer min-w-[200px]"
+            className="rounded-2xl border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 px-4 py-2.5 text-xs font-bold text-brand-dark-900 dark:text-brand-gray-200 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20 cursor-pointer min-w-[200px]"
           >
             <option value="popular">Paling Populer</option>
             <option value="price_asc">Harga Terendah</option>
@@ -272,11 +272,11 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
           isFilterPanelOpen ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'
         }`}
       >
-        <div className="rounded-3xl border border-brand-gray-100 bg-brand-gray-50/35 p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="rounded-3xl border border-brand-gray-100 dark:border-brand-dark-800 bg-brand-gray-50/35 dark:bg-brand-dark-900/50 p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Price Presets */}
           <div>
-            <h4 className="text-xs font-black text-brand-dark-900 uppercase tracking-wider">Pilihan Cepat Harga</h4>
+            <h4 className="text-xs font-black text-brand-dark-900 dark:text-brand-gray-200 uppercase tracking-wider">Pilihan Cepat Harga</h4>
             <div className="mt-3.5 flex flex-wrap gap-2">
               {(
                 [
@@ -292,7 +292,7 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
                   className={`rounded-full px-4.5 py-2.5 text-xs font-bold border transition-colors cursor-pointer ${
                     pricePreset === preset.value
                       ? 'bg-brand-orange-600 text-white border-brand-orange-600 shadow-sm'
-                      : 'bg-white text-brand-gray-500 border-brand-gray-200 hover:bg-brand-gray-50'
+                      : 'bg-white dark:bg-brand-dark-800 text-brand-gray-500 dark:text-brand-gray-400 border-brand-gray-200 dark:border-brand-dark-700 hover:bg-brand-gray-50 dark:hover:bg-brand-dark-700'
                   }`}
                 >
                   {preset.label}
@@ -303,7 +303,7 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
 
           {/* Price Range Option (Custom) */}
           <div>
-            <h4 className="text-xs font-black text-brand-dark-900 uppercase tracking-wider">Batasi Nominal Harga (Kustom)</h4>
+            <h4 className="text-xs font-black text-brand-dark-900 dark:text-brand-gray-200 uppercase tracking-wider">Batasi Nominal Harga (Kustom)</h4>
             
             {/* Custom Range Inputs */}
             <div className="mt-3.5 flex items-center gap-2">
@@ -312,21 +312,21 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
                 value={minPrice}
                 onChange={(e) => handleMinPriceChange(e.target.value)}
                 placeholder="Min Harga"
-                className="w-full rounded-2xl border border-brand-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-brand-dark-900 placeholder-brand-gray-400 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20"
+                className="w-full rounded-2xl border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 px-4 py-2.5 text-xs font-bold text-brand-dark-900 dark:text-brand-gray-200 placeholder-brand-gray-400 dark:placeholder-brand-gray-500 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20"
               />
-              <span className="text-brand-gray-300 text-xs shrink-0">s/d</span>
+              <span className="text-brand-gray-300 dark:text-brand-gray-500 text-xs shrink-0">s/d</span>
               <input
                 type="number"
                 value={maxPrice}
                 onChange={(e) => handleMaxPriceChange(e.target.value)}
                 placeholder="Max Harga"
-                className="w-full rounded-2xl border border-brand-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-brand-dark-900 placeholder-brand-gray-400 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20"
+                className="w-full rounded-2xl border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 px-4 py-2.5 text-xs font-bold text-brand-dark-900 dark:text-brand-gray-200 placeholder-brand-gray-400 dark:placeholder-brand-gray-500 outline-none focus:border-brand-orange-500 focus:ring-2 focus:ring-brand-orange-500/20"
               />
               
               {hasActiveFilters && (
                 <button
                   onClick={handleResetFilters}
-                  className="rounded-2xl border border-brand-gray-200 bg-white p-3 text-brand-gray-400 hover:text-brand-orange-600 transition-colors cursor-pointer shrink-0"
+                  className="rounded-2xl border border-brand-gray-200 dark:border-brand-dark-700 bg-white dark:bg-brand-dark-800 p-3 text-brand-gray-400 dark:text-brand-gray-500 hover:text-brand-orange-600 dark:hover:text-brand-orange-500 transition-colors cursor-pointer shrink-0"
                   title="Atur Ulang Filter"
                 >
                   <RotateCcw className="h-4 w-4" />
@@ -342,7 +342,7 @@ export default function FoodCatalog({ searchQuery, onOrderClick }: FoodCatalogPr
       {isLoading ? (
         <div className="mt-24 flex flex-col items-center justify-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-brand-orange-500" />
-          <p className="text-sm font-semibold text-brand-gray-500">Memuat hidangan lezat...</p>
+          <p className="text-sm font-semibold text-brand-gray-500 dark:text-brand-gray-400">Memuat hidangan lezat...</p>
         </div>
       ) : processedFoods.length > 0 ? (
         /* Food Grid */
